@@ -1,0 +1,8 @@
+                                               Table "public.transaction_table"    Column     |            Type             | Collation | Nullable |                         Default
+---------------+-----------------------------+-----------+----------+----------------------------------------------------------
+ transactionid | integer                     |           | not null | nextval('transaction_table_transactionid_seq'::regclass)
+ userid        | character varying(255)      |           | not null |
+ questiontype  | character varying(255)      |           | not null |
+ at_datetime   | timestamp without time zone |           | not null |
+ answer        | character varying(255)      |           |          |
+Indexes:

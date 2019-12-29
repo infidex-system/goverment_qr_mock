@@ -40,10 +40,10 @@ Client = ImgurClient(CLIENT_ID,CLIENT_SERCRET)
 # DBとのコネクション
 conn = psycopg2.connect(
     '''
-    dbname=d6i155n1m3pt0j
-    host=ec2-174-129-253-174.compute-1.amazonaws.com
-    user=mlvfguyntpxyof
-    password=f23c619df387a333b4b08cb7d97aa54622307fefc534e9727e4081eec8fa76b4
+    dbname=deqdg0cc1nkskb
+    host=ec2-54-235-167-210.compute-1.amazonaws.com
+    user=qkkzxqfdvzjnbt
+    password=2c18c9340272facc10ad89fa4c09ce1ace8e0d77822b6b1e8566249dffddee64
     '''
 )
 conn.autocommit = True
@@ -98,9 +98,9 @@ I_SQL = f"""
 app = Flask(__name__)
 
 # os.environ['LINE_CHANNEL_ACCESS_TOKEN']
-CHANNEL_ACCESS_TOKEN = "iZUTysRoxXXyoyqAojZ1rlipFpvyZQBOi2hieo5CIGnIvwahhDYJE3nW+wSEys7HsmRbhh00lcrm8aYNifLYLyyjA0ZUnE00yYJD2p7gjzw9cd0KxUjR6uBo7ItUF+r746kLemUTa84mb285I75gKAdB04t89/1O/w1cDnyilFU="
+CHANNEL_ACCESS_TOKEN = "sTmHqUheEfneCm9UZvF5z7eabbxaAZQjqDYanajkmBg1UWgOIp6bP1j3CIIRMC3y5gjPxRCzjIdGgh6IWcKjHE/hpcv80wQfLpRKd+gZ4pmaHVpnSV/htpJKKyw8pm8oqC/0TlXEq5wGJu5JB4orqwdB04t89/1O/w1cDnyilFU="
 # os.environ['LINE_CHANNEL_SECRET']
-CHANNEL_SECRET = "fce81fae0165cfdb304c730d5d1b5f9f"
+CHANNEL_SECRET = "d1d1b68c091f674643d5faf7c9df8383"
 LIFF_URI ="line://app/1653562221-8AborYAk"
 
 line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
@@ -427,10 +427,7 @@ def recieve_liff():
 def push_message(to, message):
     line_bot_api.push_message(to, messages=message)
 
-@app.route("/dummy")
-def dummy():
-    #something code
-    return redirect("https://line.me/R/ti/p/@754uglni")
+
 
 
 if __name__ == "__main__":
