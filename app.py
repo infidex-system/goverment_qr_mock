@@ -101,7 +101,7 @@ app = Flask(__name__)
 CHANNEL_ACCESS_TOKEN = "sTmHqUheEfneCm9UZvF5z7eabbxaAZQjqDYanajkmBg1UWgOIp6bP1j3CIIRMC3y5gjPxRCzjIdGgh6IWcKjHE/hpcv80wQfLpRKd+gZ4pmaHVpnSV/htpJKKyw8pm8oqC/0TlXEq5wGJu5JB4orqwdB04t89/1O/w1cDnyilFU="
 # os.environ['LINE_CHANNEL_SECRET']
 CHANNEL_SECRET = "d1d1b68c091f674643d5faf7c9df8383"
-LIFF_URI ="line://app/1653526331-jJQZGQGJ"
+LIFF_URI ="line://app/1653712705-bwvOrK1m"
 
 line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(CHANNEL_SECRET)
