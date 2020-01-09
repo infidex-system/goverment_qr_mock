@@ -2,7 +2,7 @@ import os
 import sys
 from flask import *
 import psycopg2
-from tools import tools
+import tools
 from datetime import datetime
 import qrcode
 from imgurpython import ImgurClient
@@ -12,28 +12,13 @@ from linebot import (
 from linebot.exceptions import (
     InvalidSignatureError
 )
-from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage,
-    SourceUser, SourceGroup, SourceRoom,
-    TemplateSendMessage, ConfirmTemplate, MessageAction,
-    ButtonsTemplate, ImageCarouselTemplate, ImageCarouselColumn, URIAction,
-    PostbackAction, DatetimePickerAction,
-    CameraAction, CameraRollAction, LocationAction,
-    CarouselTemplate, CarouselColumn, PostbackEvent,
-    StickerMessage, StickerSendMessage, LocationMessage, LocationSendMessage,
-    ImageMessage, VideoMessage, AudioMessage, FileMessage,
-    UnfollowEvent, FollowEvent, JoinEvent, LeaveEvent, BeaconEvent,
-    FlexSendMessage, BubbleContainer, ImageComponent, BoxComponent,
-    TextComponent, SpacerComponent, IconComponent, ButtonComponent,
-    SeparatorComponent, QuickReply, QuickReplyButton,
-    ImageSendMessage,
-)
+from linebot.models import *
 
 ###
-# imgur 
+# imgur
 CLIENT_ID = "11c33d95d3e8ffe"
 CLIENT_SERCRET = "3f81c51cc9611fb18a74b653d26a7126e688e90d"
-Client = ImgurClient(CLIENT_ID,CLIENT_SERCRET)
+Client = ImgurClient(CLIENT_ID, CLIENT_SERCRET)
 
 
 ####
@@ -48,7 +33,6 @@ conn = psycopg2.connect(
 )
 conn.autocommit = True
 
-###
 # 表名,列名を定義
 TRANSACTION_TABLE = "TRANSACTION_TABLE"
 C_TRANSACTIONID = "transactionid"
@@ -81,7 +65,7 @@ ANSWER = {
 LAST_SQL = f"""SELECT {C_QUESTION_TYPE}, {C_ANSWER} FROM {TRANSACTION_TABLE}
             WHERE '*u'={C_USERID}
             AND {C_AT_DATETIME} IN (
-                SELECT MAX({C_AT_DATETIME}) FROM {TRANSACTION_TABLE} 
+                SELECT MAX({C_AT_DATETIME}) FROM {TRANSACTION_TABLE}
                 WHERE '*u'={C_USERID}
                 AND {C_QUESTION_TYPE} LIKE '*qt%'
                 GROUP BY {C_QUESTION_TYPE}
@@ -97,21 +81,20 @@ I_SQL = f"""
 # 以下、Flask web app
 app = Flask(__name__)
 
-# os.environ['LINE_CHANNEL_ACCESS_TOKEN']
-CHANNEL_ACCESS_TOKEN = "sTmHqUheEfneCm9UZvF5z7eabbxaAZQjqDYanajkmBg1UWgOIp6bP1j3CIIRMC3y5gjPxRCzjIdGgh6IWcKjHE/hpcv80wQfLpRKd+gZ4pmaHVpnSV/htpJKKyw8pm8oqC/0TlXEq5wGJu5JB4orqwdB04t89/1O/w1cDnyilFU="
-# os.environ['LINE_CHANNEL_SECRET']
+CHANNEL_ACCESS_TOKEN = "iZUTysRoxXXyoyqAojZ1rlipFpvyZQBOi2hieo5CIGnIvwahhDYJE3nW+wSEys7HsmRbhh00lcrm8aYNifLYLyyjA0ZUnE00yYJD2p7gjzw9cd0KxUjR6uBo7ItUF+r746kLemUTa84mb285I75gKAdB04t89/1O/w1cDnyilFU="
 CHANNEL_SECRET = "d1d1b68c091f674643d5faf7c9df8383"
 LIFF_URI ="line://app/1653712705-bwvOrK1m"
 
+
 line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(CHANNEL_SECRET)
-
 # 以下、処理
 
 
 @app.route('/favicon.ico')
 def favicon():
     return "OK.There is noting!"
+
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -147,29 +130,15 @@ def handle_message(event):
             cur.execute(sql)
 
         # ボタンテンプレートメッセージを作成
-        buttons_template_message = TemplateSendMessage(
-            alt_text='Buttons template',
-            template=ButtonsTemplate(
-                title='目的選択',
-                text='自分の目的に合うものをご選択ください。', 
-                actions=[
-                    PostbackAction(
-                        label='引越し手続き(転出届)',
-                        display_text="転出届けを出したい",
-                        data='start:moving'
-                    ),
-                    PostbackAction(
-                        label='住民票発行',
-                        data='start:issueResidentCard'
-                    ),
-                    PostbackAction(
-                        label='マイナンバーカード発行',
-                        data='start:issueMyNumberCard'
-                    )
-                ])
-        )
+        message = tools.gen_startmenu_carousel()
         line_bot_api.reply_message(
-            event.reply_token, messages=buttons_template_message)
+            event.reply_token, messages=message)
+    # elif(event.message.text=="カルーセル"):
+    #     message = tools.gen_sample_carousel()
+    #     line_bot_api.reply_message(
+    #         event.reply_token,
+    #         messages=message
+    #     )
 
     else:  # その他のメッセージがきた場合。
         line_bot_api.reply_message(
@@ -242,7 +211,8 @@ def handle_postback(event):
                     actions=[
                         URIAction(
                             label='住所を入力',
-                            uri=LIFF_URI,
+                            # LIFFのURL
+                            uri=LIFF_URI
                             data="question_n:moving_2",
                         )
                     ])
@@ -253,7 +223,7 @@ def handle_postback(event):
         # answer:moving_3
         elif(answer == ANSWER[question]["引越し手続き_質問3"]):
             line_bot_api.push_message(user_id, TextSendMessage(
-                    text="市役所の予約日を承りました。"))
+                text="市役所の予約日を承りました。"))
             sql = I_SQL.replace("*u", user_id).replace("*q",
                                                        answer).replace("*a", event.postback.params["datetime"])
             with conn.cursor() as cur:
@@ -279,7 +249,7 @@ def handle_postback(event):
                         BoxComponent(
                             layout='vertical',
                             margin='lg',
-                            contents=tools.box_gen(results)
+                            contents=tools.gen_box(results)
                         ),
                     ]
                 ),
@@ -291,7 +261,7 @@ def handle_postback(event):
             confirm_message = TemplateSendMessage(
                 alt_text='Confirm template',
                 template=ConfirmTemplate(
-                    text='入力に問題はないですか?',
+                    text='入力に問題はないですか？',
                     actions=[
                         PostbackAction(
                             label='OK',
@@ -329,20 +299,21 @@ def handle_postback(event):
             path = "./img/"
             imagename = now.isoformat() + user_id + ".png"
             imagepath = path + imagename
-            
+
             img = qrcode.make(qr_data)
             print(type(img))
             img.save(imagepath)
-            
-            imagelink = Client.upload_from_path(imagepath, config=None, anon=True)["link"]
-            print(f"uploaded to {imagelink}")
 
+            imagelink = Client.upload_from_path(
+                imagepath, config=None, anon=True)["link"]
+            print(f"uploaded to {imagelink}")
 
             image_message = ImageSendMessage(
                 original_content_url=imagelink,
                 preview_image_url=imagelink
             )
-            line_bot_api.push_message(user_id,TextSendMessage(text="予約が完了しました。当日、スタッフにこちらのQRコードをご提示ください。"))
+            line_bot_api.push_message(user_id, TextSendMessage(
+                text="予約が完了しました。当日、スタッフにこちらのQRコードをご提示ください。"))
 
             line_bot_api.reply_message(rt, messages=image_message)
 
@@ -352,33 +323,18 @@ def handle_follow(event):
     reply_token = event.reply_token
     userID = event.source.user_id
 
-    # ボタンテンプレートメッセージを作成
-    buttons_template_message = TemplateSendMessage(
-        alt_text='Buttons template',
-        template=ButtonsTemplate(
-            title='目的選択',
-            text='自分の目的に合うものをご選択ください。',
-            actions=[
-                PostbackAction(
-                    label='引越し手続き(転出届け)',
-                    display_text="転出届けを出したい",
-                    data='start:moving'
-                ),
-                PostbackAction(
-                    label='住民票発行',
-                    data='start:issueResidentCard'
-                ),
-                PostbackAction(
-                    label='マイナンバーカード発行',
-                    data='start:issueMyNumberCard'
-                )
-            ])
-    )
 
-    line_bot_api.reply_message(reply_token, messages=buttons_template_message)
+    message = tools.gen_startmenu_carousel()
+    line_bot_api.reply_message(reply_token, messages=message)
 
-# @handler.add(UnfollowEvent):
-#     #DBからアンフォローしたユーザのトランザクションデータを全て削除。
+
+@handler.add(UnfollowEvent)
+# DBからアンフォローしたユーザのトランザクションデータを全て削除。
+def deleteuserdata(event):
+    sql = f"DELETE FROM {TRANSACTION_TABLE} WHERE {C_USERID} ='{event.source.user_id}'"
+    with conn.cursor() as cur:
+        cur.execute(sql)
+    return "OK"
 
 # LIFF
 @app.route("/enter_address", methods=["GET", "POST"])
@@ -388,10 +344,10 @@ def display_liff():
 # moving_2のハンドラ
 @app.route("/recieve_address", methods=["POST"])
 def recieve_liff():
-    
+
     # 受け取った情報をDBに格納。
     user_id = request.form["user_id"]
-    #ついでに返信
+    # ついでに返信
     line_bot_api.push_message(user_id, TextSendMessage(
         text="入力されたご住所を承りました。"))
     answer = request.form["answer"]
@@ -426,8 +382,6 @@ def recieve_liff():
 
 def push_message(to, message):
     line_bot_api.push_message(to, messages=message)
-
-
 
 
 if __name__ == "__main__":
