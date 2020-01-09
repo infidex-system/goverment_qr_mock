@@ -81,7 +81,7 @@ I_SQL = f"""
 # 以下、Flask web app
 app = Flask(__name__)
 
-CHANNEL_ACCESS_TOKEN = "iZUTysRoxXXyoyqAojZ1rlipFpvyZQBOi2hieo5CIGnIvwahhDYJE3nW+wSEys7HsmRbhh00lcrm8aYNifLYLyyjA0ZUnE00yYJD2p7gjzw9cd0KxUjR6uBo7ItUF+r746kLemUTa84mb285I75gKAdB04t89/1O/w1cDnyilFU="
+CHANNEL_ACCESS_TOKEN = "sTmHqUheEfneCm9UZvF5z7eabbxaAZQjqDYanajkmBg1UWgOIp6bP1j3CIIRMC3y5gjPxRCzjIdGgh6IWcKjHE/hpcv80wQfLpRKd+gZ4pmaHVpnSV/htpJKKyw8pm8oqC/0TlXEq5wGJu5JB4orqwdB04t89/1O/w1cDnyilFU="
 CHANNEL_SECRET = "d1d1b68c091f674643d5faf7c9df8383"
 LIFF_URI ="line://app/1653712705-bwvOrK1m"
 
