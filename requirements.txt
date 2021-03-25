@@ -23,7 +23,7 @@ psycopg2-binary==2.8.4
 pyasn1==0.4.8
 pycodestyle==2.5.0
 python-dateutil==2.8.0
-PyYAML==5.1.2
+PyYAML==5.4
 qrcode==6.1
 requests==2.22.0
 rsa==3.4.2
